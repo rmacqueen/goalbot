@@ -49,21 +49,26 @@ while True:
     'X-Auth-Token': FOOTBALL_API_TOKEN,
     'X-Response-Control': 'minified',
   }
-  r = requests.get('http://api.football-data.org/v1/competitions/467/fixtures', headers=headers)
-  body = r.json()
-  with open(DATA_FILE) as f:
-      oldData = json.load(f)
 
-  for i in range(len(oldData['fixtures'])):
-    oldVersion = oldData['fixtures'][i]
-    newVersion = body['fixtures'][i]
+  try:
+    r = requests.get('http://api.football-data.org/v1/competitions/467/fixtures', headers=headers)
+    body = r.json()
+    with open(DATA_FILE) as f:
+        oldData = json.load(f)
 
-    # sanity check
-    if oldVersion['id'] != newVersion['id']:
-      print("IDs do not match", oldVersion['id'], newVersion['id'])
-      continue
+    for i in range(len(oldData['fixtures'])):
+      oldVersion = oldData['fixtures'][i]
+      newVersion = body['fixtures'][i]
 
-    checkGoal(oldVersion, newVersion)
+      # sanity check
+      if oldVersion['id'] != newVersion['id']:
+        print("IDs do not match", oldVersion['id'], newVersion['id'])
+        continue
+
+      checkGoal(oldVersion, newVersion)
+  except (KeyError, ValueError) as err:
+    print(err)
+    continue
 
   with open(DATA_FILE, 'w') as f:
     json.dump(body, f, indent=2)
