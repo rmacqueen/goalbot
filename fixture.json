@@ -5,15 +5,19 @@
       "id": 165069,
       "competitionId": 467,
       "date": "2018-06-14T15:00:00Z",
-      "status": "TIMED",
+      "status": "FINISHED",
       "matchday": 1,
       "homeTeamName": "Russia",
       "homeTeamId": 808,
       "awayTeamName": "Saudi Arabia",
       "awayTeamId": 801,
       "result": {
-        "goalsHomeTeam": null,
-        "goalsAwayTeam": null
+        "goalsHomeTeam": 5,
+        "goalsAwayTeam": 0,
+        "halfTime": {
+          "goalsHomeTeam": 1,
+          "goalsAwayTeam": 0
+        }
       },
       "odds": null
     },
