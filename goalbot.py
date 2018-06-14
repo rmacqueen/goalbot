@@ -10,7 +10,8 @@ CHANNEL_ID         = os.environ['CHANNEL_ID']
 DATA_FILE = 'fixture.json';
 
 def sendMessage(scoringTeam, homeTeamName, awayTeamName, goalsHomeTeam, goalsAwayTeam):
-
+  # sleep for 2 mins to allow people to watch the goal on tv :-)
+  time.sleep(60 * 2)
   message = "{} have scored! The score is now {} {} - {} {}".format(scoringTeam, homeTeamName, str(goalsHomeTeam), str(goalsAwayTeam), awayTeamName)
 
   params = {
