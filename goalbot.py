@@ -7,12 +7,14 @@ SLACK_TOKEN        = os.environ['SLACK_TOKEN']
 FOOTBALL_API_TOKEN = os.environ['FOOTBALL_API_TOKEN']
 CHANNEL_ID         = os.environ['CHANNEL_ID']
 
-DATA_FILE = 'fixture.json';
+DATA_FILE = 'fixture.json'
 
 def sendMessage(scoringTeam, homeTeamName, awayTeamName, goalsHomeTeam, goalsAwayTeam):
   # sleep for 2 mins to allow people to watch the goal on tv :-)
+  print("Going to send message for", scoringTeam)
   time.sleep(60 * 2)
-  message = "{} have scored! The score is now {} {} - {} {}".format(scoringTeam, homeTeamName, str(goalsHomeTeam), str(goalsAwayTeam), awayTeamName)
+  message = "{} have scored! The score is now {} {} - {} {}".format(
+    scoringTeam, homeTeamName, str(goalsHomeTeam), str(goalsAwayTeam), awayTeamName)
 
   params = {
     'channel': CHANNEL_ID,
@@ -24,22 +26,22 @@ def sendMessage(scoringTeam, homeTeamName, awayTeamName, goalsHomeTeam, goalsAwa
   }
   r = requests.post('https://slack.com/api/chat.postMessage', params=params, headers=headers)
 
-def checkGoal(oldVersion, newVersion):
-  if oldVersion['result']['goalsHomeTeam'] != newVersion['result']['goalsHomeTeam']:
+def checkGoal(oldVn, newVn):
+  if oldVn['result']['goalsHomeTeam'] < newVn['result']['goalsHomeTeam']:
     sendMessage(
-      newVersion['homeTeamName'],
-      newVersion['homeTeamName'],
-      newVersion['awayTeamName'],
-      newVersion['result']['goalsHomeTeam'],
-      newVersion['result']['goalsAwayTeam'])
+      newVn['homeTeamName'],
+      newVn['homeTeamName'],
+      newVn['awayTeamName'],
+      newVn['result']['goalsHomeTeam'],
+      newVn['result']['goalsAwayTeam'])
 
-  if oldVersion['result']['goalsAwayTeam'] != newVersion['result']['goalsAwayTeam']:
+  if oldVn['result']['goalsAwayTeam'] < newVn['result']['goalsAwayTeam']:
     sendMessage(
-      newVersion['awayTeamName'],
-      newVersion['homeTeamName'],
-      newVersion['awayTeamName'],
-      newVersion['result']['goalsHomeTeam'],
-      newVersion['result']['goalsAwayTeam'])
+      newVn['awayTeamName'],
+      newVn['homeTeamName'],
+      newVn['awayTeamName'],
+      newVn['result']['goalsHomeTeam'],
+      newVn['result']['goalsAwayTeam'])
 
 
 while True:
@@ -58,6 +60,10 @@ while True:
 
     for i in range(len(oldData['fixtures'])):
       oldVersion = oldData['fixtures'][i]
+
+      if oldVersion['result']['goalsAwayTeam'] is None or oldVersion['result']['goalsHomeTeam'] is None:
+        continue
+
       newVersion = body['fixtures'][i]
 
       # sanity check
