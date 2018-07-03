@@ -58,17 +58,24 @@ while True:
     with open(DATA_FILE) as f:
         oldData = json.load(f)
 
+    for i in range(len(body['fixtures'])):
+      if body['fixtures'][i]['result']['goalsHomeTeam'] is None:
+        body['fixtures'][i]['result']['goalsHomeTeam'] = 0
+
+      if body['fixtures'][i]['result']['goalsAwayTeam'] is None:
+        body['fixtures'][i]['result']['goalsAwayTeam'] = 0
+
     for i in range(len(oldData['fixtures'])):
       oldVersion = oldData['fixtures'][i]
-
-      if oldVersion['result']['goalsAwayTeam'] is None or oldVersion['result']['goalsHomeTeam'] is None:
-        continue
 
       newVersion = body['fixtures'][i]
 
       # sanity check
       if oldVersion['id'] != newVersion['id']:
         print("IDs do not match", oldVersion['id'], newVersion['id'])
+        continue
+
+      if newVersion['status'] != 'IN_PLAY':
         continue
 
       checkGoal(oldVersion, newVersion)
